@@ -1,7 +1,7 @@
 """
 The function bhatta_dist() calculates the Bhattacharyya distance between two classes on a single feature.
-    The distance is positively correlated to the discrimination power of this feature. Four different methods are
-    provided for calculating the Bhattacharyya coefficient.
+    The distance is positively correlated to the class separation within this feature. Four different methods
+    are provided for calculating the Bhattacharyya coefficient.
 
 Created on 4/14/2018
 Author: Eric Williamson (ericpaulwill@gmail.com)
