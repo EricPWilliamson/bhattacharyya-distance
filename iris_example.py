@@ -34,8 +34,3 @@ for name,d in zip(names,bh_dists):
 #Use the results to rank features:
 print("Feature ranking:")
 print(np.array(names)[bh_dists.argsort()[::-1]])
-
-# from small_multiples import plot_small_multiples
-# plot_small_multiples(X, names, Y, Y_select=Y_SELECTION, cov_factor=.1)
-#
-# print('done')
