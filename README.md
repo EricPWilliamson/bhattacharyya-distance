@@ -7,7 +7,7 @@ The function accepts discrete data and is not limited to a particular probabilit
 
 * bhatta_dist.py - Contains functions for calculating Bhattacharyya distance.
 * iris_example.py - Usage example
-* test_bhatta.py - Verification of the calculations in bhatta_dist()
+* bhatta_test.py - Verification of the calculations in bhatta_dist()
 
 ### Notes
 
