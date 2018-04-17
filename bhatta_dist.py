@@ -97,8 +97,6 @@ def bhatta_dist2(x, Y, Y_selection=None, method='continuous'):
     #Make sure Y_selection is just 2 classes:
     if len(Y_selection) != 2:
         raise ValueError("Use parameter Y_selection to select just 2 classes.")
-    #!!Rescale x:
-    x = (x-min(x)) / (max(x)-min(x))
     #Separate x into X1 and X2:
     X1 = np.array(x,dtype=np.float64)[Y==Y_selection[0]]
     X2 = np.array(x,dtype=np.float64)[Y==Y_selection[1]]
