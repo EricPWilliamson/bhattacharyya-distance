@@ -1,6 +1,6 @@
 """
 The function bhatta_dist() calculates the Bhattacharyya distance between two classes on a single feature.
-    The distance is positively correlated to the discrimination power of this feature. Four different methods are
+    The distance is positively correlated to the class separation of this feature. Four different methods are
     provided for calculating the Bhattacharyya coefficient.
 
 Created on 4/14/2018
@@ -12,7 +12,7 @@ from scipy.stats import gaussian_kde
 
 def bhatta_dist(X1, X2, method='continuous'):
     #Calculate the Bhattacharyya distance between X1 and X2. X1 and X2 should be 1D numpy arrays representing the same
-    # feature in two separate classes. !!!Uses density histograms, which are sensitive to scale!!
+    # feature in two separate classes. 
 
     def get_density(x, cov_factor=0.1):
         #Produces a continuous density function for the data in 'x'. Some benefit may be gained from adjusting the cov_factor.
