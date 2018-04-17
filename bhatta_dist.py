@@ -1,7 +1,7 @@
 """
 The function bhatta_dist() calculates the Bhattacharyya distance between two classes on a single feature.
-    The distance is positively correlated to the class separation within this feature. Four different methods
-    are provided for calculating the Bhattacharyya coefficient.
+    The distance is positively correlated to the discrimination power of this feature. Four different methods are
+    provided for calculating the Bhattacharyya coefficient.
 
 Created on 4/14/2018
 Author: Eric Williamson (ericpaulwill@gmail.com)
@@ -12,7 +12,7 @@ from scipy.stats import gaussian_kde
 
 def bhatta_dist(X1, X2, method='continuous'):
     #Calculate the Bhattacharyya distance between X1 and X2. X1 and X2 should be 1D numpy arrays representing the same
-    # feature in two separate classes.
+    # feature in two separate classes. !!!Uses density histograms, which are sensitive to scale!!
 
     def get_density(x, cov_factor=0.1):
         #Produces a continuous density function for the data in 'x'. Some benefit may be gained from adjusting the cov_factor.
@@ -34,7 +34,7 @@ def bhatta_dist(X1, X2, method='continuous'):
         for x in uX:
             p1 = (X1==x).sum() / A1
             p2 = (X2==x).sum() / A2
-            bht += sqrt(p1*p2) / len(uX)
+            bht += sqrt(p1*p2) * (max(cX)-min(cX))/len(uX)
 
     elif method == 'hist':
         ###Bin the values into a hardcoded number of bins (This is sensitive to N_BINS)
@@ -47,7 +47,7 @@ def bhatta_dist(X1, X2, method='continuous'):
         for i in range(N_BINS):
             p1 = h1[i]
             p2 = h2[i]
-            bht += sqrt(p1*p2) / N_BINS
+            bht += sqrt(p1*p2) * (max(cX)-min(cX))/N_BINS
 
     elif method == 'autohist':
         ###Bin the values into bins automatically set by np.histogram:
@@ -64,10 +64,10 @@ def bhatta_dist(X1, X2, method='continuous'):
         for i in range(len(h1)):
             p1 = h1[i]
             p2 = h2[i]
-            bht += sqrt(p1*p2)/len(h1)
+            bht += sqrt(p1*p2) * (max(cX)-min(cX))/len(h1)
 
     elif method == 'continuous':
-        ###Use a continuous density function to calculate the coefficient (This is the most consistent):
+        ###Use a continuous density function to calculate the coefficient (This is the most consistent, but also slightly slow):
         N_STEPS = 200
         #Get density functions:
         d1 = get_density(X1)
@@ -76,7 +76,9 @@ def bhatta_dist(X1, X2, method='continuous'):
         xs = np.linspace(min(cX),max(cX),N_STEPS)
         bht = 0
         for x in xs:
-            bht += sqrt(d1(x) * d2(x)) / N_STEPS
+            p1 = d1(x)
+            p2 = d2(x)
+            bht += sqrt(p1*p2)*(max(cX)-min(cX))/N_STEPS
 
     else:
         raise ValueError("The value of the 'method' parameter does not match any known method")
@@ -86,3 +88,19 @@ def bhatta_dist(X1, X2, method='continuous'):
         return float('Inf')
     else:
         return -np.log(bht)
+
+
+def bhatta_dist2(x, Y, Y_selection=None, method='continuous'):
+    #Same as bhatta_dist, but takes different inputs. Takes a feature 'x' and separates it by class ('Y').
+    if Y_selection is None:
+        Y_selection = list(set(Y))
+    #Make sure Y_selection is just 2 classes:
+    if len(Y_selection) != 2:
+        raise ValueError("Use parameter Y_selection to select just 2 classes.")
+    #!!Rescale x:
+    x = (x-min(x)) / (max(x)-min(x))
+    #Separate x into X1 and X2:
+    X1 = np.array(x,dtype=np.float64)[Y==Y_selection[0]]
+    X2 = np.array(x,dtype=np.float64)[Y==Y_selection[1]]
+    #Plug X1 and X2 into bhatta_dist():
+    return bhatta_dist(X1, X2, method=method)
